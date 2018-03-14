@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <title>Chatter/Tech/Angular</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+    <style>
+      form { padding: 20px; position: fixed; bottom: 0; width: 100%; padding-right: 50px;}
+      #messages { list-style-type: none; margin: 0;padding: 0; width:100%}
+      #messages li { padding: 5px 10px;}
+      #messages li:nth-child(odd) { background: #eee;}
+    </style>
+  </head>
+  <body>
+    <div class="container-fluid">
+      <div class="row">
+        <ul id="messages"></ul>
+      </div>
+      <div class="row">
+        <div class="col-lg-6">
+          <form action="">
+              <div class="input-group">
+                  <input id="m" autpcomplete="off" type="text" class="form-control" placeholder="Message..."
+                  aria-label="Message...">
+                  <span class="input-group-btn">
+                    <button class="btn btn-secondary" type="submit">Send</button>
+                  </span>
+                </div>
+          </form>
+        </div>
+      </div>
+    </div>
+    <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script>
+    <script src="/socket.io/socket.io.js"></script>
+    <script>
+        // const socket = io.connect('http://localhost:3000');
+        // socket.on('message', (data) => {
+        //   console.log(data);
+        //   socket.emit('another event', {Anudeep: 'I am doing great, what about you !!!'});
+        // });
+        const room = 'angular';
+        const socket = io('/tech');
+        $('form').submit(() => {
+          let msg = $('#m').val();
+          socket.emit('message', {msg, room});
+          $('#m').val('');
+          return false;
+        });
+        socket.on('connect', () => {
+          //emitting to everybody
+          socket.emit('join', {room: room});
+        });
+        socket.on('message', (msg) => {
+          $('#messages').append($('<li>').text(msg));
+        });
+      </script>
+  </body>
+</html>
